@@ -36,7 +36,7 @@ class GPTLensGUI:
         # Create an instance of Style widget
         style=ttk.Style()
         style.theme_use('clam')
-
+        self.font_size=12
 
         self.create_images()
         # self.setup_ui()
@@ -96,44 +96,45 @@ class GPTLensGUI:
         start_button.place(relx=0.5, rely=0.8, anchor="center")  # Position the button relative to the window size
         
         self.root.withdraw()
-
     def show_pdf_slides(self):
         self.cover_screen.destroy()
         self.root.deiconify() 
         
-        self.setup_scroll()
+        self.setup_scroll_and_window()
 
         pdf_path = "src/assets/GPT-Lens-demo-slide.pdf"
         pg=[]
         for i in range(0,6):
             pg.append(self.load_page(pdf_path,i))
 
-        self.title_bar_container = tk.Frame(self.main_frame,bg=self.color,highlightbackground="black", highlightthickness=0.5)
-        self.title_bar_container.pack(fill='x',padx=0)
-        self.slide_frame = tk.Frame(self.main_frame)
-        self.slide_frame.pack(fill='x',padx=0)
-        self.main_frame.grid_columnconfigure(0, weight=1)
-        self.title_bar_container.grid_columnconfigure(0, weight=1)
-        self.slide_frame.grid_columnconfigure(0, weight=1)
+        self.title_bar_container = tk.Frame(self.main_frame, bg=self.color, highlightbackground="black", highlightthickness=0.5)
+        self.title_bar_container.grid(row=0, column=0, sticky='ew')  # Span across all columns horizontally
+        self.title_bar_container.grid_columnconfigure(0, minsize=1300) # Allow expansion of the column
 
-        label = tk.Label(self.title_bar_container, text="GPT-lens Architecture Overview", font=('Arial', 30, 'bold'),bg=self.color)
-        label.grid(row=0, column=0, sticky='n',pady=15,padx=10)  # Span only the first column
+        label = tk.Label(self.title_bar_container, text="GPT-lens Architecture Overview", font=('Arial', 30, 'bold'), bg=self.color)
+        label.grid(row=0, column=0, sticky='new', pady=15, padx=10)  # Span only the first column
 
         label = tk.Label(self.title_bar_container, 
-                         text="""Scroll down to view a demonstration on GPT-Lens architecture, click 'Next' to go to data walkthrough""", 
-                         font=('Arial',14),
-                         bg=self.color)
-        label.grid(row=1, column=0, sticky='n',pady=0,padx=10)  # Span only the first column
+                        text="Scroll down to view a demonstration on GPT-Lens architecture, click 'Next' to go to data walkthrough", 
+                        font=('Arial', 14),
+                        bg=self.color)
+        label.grid(row=1, column=0, sticky='n', pady=0, padx=10)  # Span only the first column
+
+        self.slide_frame = tk.Frame(self.main_frame)
+        self.slide_frame.grid(row=1,column=0, sticky='n')  # Adjusted packing to span whole width
+        self.main_frame.grid_columnconfigure(0, weight=1)
+        self.slide_frame.grid_columnconfigure(0, weight=1)
 
         # Create a label to display the image
         for i,p in enumerate(pg):
             pdf_label = tk.Label(self.slide_frame, image=p)
             pdf_label.image = p  # Keep a reference to prevent garbage collection
-            pdf_label.grid(row=i, column=1, sticky='n',pady=0,padx=10) 
+            pdf_label.grid(row=i, column=1, sticky='n', pady=0, padx=10) 
 
         # Button to go to data walkthrough
         data_button = tk.Button(self.main_frame, text="Next", command=self.setup_ui)
-        data_button.pack()
+        data_button.grid()
+
 
         
     def load_page(self, path, page_n):
@@ -156,7 +157,7 @@ class GPTLensGUI:
         for widget in self.root.winfo_children():
             widget.destroy()
         self.root.deiconify() 
-        self.setup_scroll()
+        self.setup_scroll_and_window()
         self.setup_frames()
     
     def update_font_size(self, event=None):
@@ -179,7 +180,7 @@ class GPTLensGUI:
         style = ttk.Style(self.root)
         style.configure('Treeview', font=new_font)
 
-    def setup_scroll(self):
+    def setup_scroll_and_window(self):
         # vertical scrollbar
         scroll_y = tk.Scrollbar(self.root)
         scroll_y.pack(side='right', fill='y')
@@ -188,19 +189,17 @@ class GPTLensGUI:
         scroll_x = tk.Scrollbar(self.root, orient='horizontal')
         scroll_x.pack(side='bottom', fill='x')
 
-        self.canvas = tk.Canvas(self.root, yscrollcommand=scroll_y.set,xscrollcommand=scroll_x.set)
+        self.canvas = tk.Canvas(self.root, yscrollcommand=scroll_y.set, xscrollcommand=scroll_x.set)
         self.canvas.pack(side='left', fill='both', expand=True)
 
         scroll_y.config(command=self.canvas.yview)
         scroll_x.config(command=self.canvas.xview)
 
-
         self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
 
         self.main_frame = tk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.main_frame)
+        self.canvas.create_window((0, 0), window=self.main_frame, anchor="nw")  # Anchor to the northwest corner
         self.main_frame.bind('<Configure>', lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
-
 
     def setup_frames(self):
 
@@ -218,7 +217,7 @@ class GPTLensGUI:
         label1 = tk.Label(self.acknowldgement, text="""Acknowledgement: This is a mini-project Yining Yuan did with GIT DiSL group under the supervision of Prof. Dr. Ling Liu 
                           and PhD student Sihao Hu. For more detailed information on GPTLens, see the paper (https://arxiv.org/pdf/2310.01152.pdf) and open source code 
                           (https://github.com/git-disl/GPTLens?tab=readme-ov-file) and for technical questions, consult with Sihao Hu.""",fg="gray")
-        label1.grid(row=0, column=2, sticky='n',padx=10)
+        label1.grid(row=0, column=0, sticky='n',padx=10)
 
 
 
@@ -226,6 +225,7 @@ class GPTLensGUI:
 
         self.title_bar_container = tk.Frame(self.main_frame,bg=color,highlightbackground="black", highlightthickness=0.5)
         self.title_bar_container.grid_columnconfigure(0, weight=1)  # This will allow the column to expand
+        self.title_bar_container.grid_columnconfigure(0, minsize=1300)
 
         self.dropdown_frame = tk.Frame(self.main_frame)
         self.preprocessing_frame = tk.Frame(self.main_frame)
@@ -239,7 +239,8 @@ class GPTLensGUI:
         self.ranker_container = tk.Frame(self.main_frame)
         self.acknowldgement = tk.Frame(self.main_frame)
         
-        self.title_bar_container.pack(fill='x',padx=0)
+        self.title_bar_container.pack(fill='x', expand=True, padx=0)
+
         self.dropdown_frame.pack(fill='x')
 
         self.preprocessing_frame.pack(fill='x')   # Pack the container frames vertically
@@ -269,7 +270,7 @@ class GPTLensGUI:
 
         self.settings_button = tk.Button(self.title_bar_container, image=self.settings_icon, command=self.on_settings_icon_click, borderwidth=0)
         self.settings_button.image = self.settings_icon  # Keep a reference to the image
-        self.settings_button.grid(row=0, column=0, sticky='ne',pady=5,padx=10) 
+        self.settings_button.grid(row=0, column=0, sticky='nw',pady=5,padx=20) 
         
     def on_settings_icon_click(self):
         # Method bound to the settings icon click event
