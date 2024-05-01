@@ -41,8 +41,15 @@ Demo app displaying data pipelining:
 
 
 
+## Acknowledgements
 
+This mini-project, GPTLens, was developed by Yining Yuan in collaboration with the GIT DiSL group under the supervision of Prof. Dr. Ling Liu and PhD student Sihao Hu.
 
+For more detailed information on GPTLens, please refer to the following resources:
+- [GPTLens Paper](https://arxiv.org/pdf/2310.01152.pdf)
+- [GPTLens Open Source Code](https://github.com/git-disl/GPTLens?tab=readme-ov-file)
+
+For any technical questions regarding this project, please consult with Sihao Hu.
 
 
 
