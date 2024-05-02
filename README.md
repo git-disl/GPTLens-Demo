@@ -1,7 +1,7 @@
 # GPTLens Demo
 <img width="394" alt="Screenshot 2024-05-01 at 8 37 33 AM" src="https://github.com/git-disl/GPTLens-Demo/assets/72898301/788b9092-6be7-4e8a-81e5-b1a345bde63b">
 
-GPT Lens is an LLM tool to check for security breaches in smart contracts. To learn more, go to : https://github.com/git-disl/GPTLens. This demo provides a scenario-based walkthrough of how GPTLens utilizes LLMs to examine smart contract code and detect vulnerabilities.
+GPT Lens is an LLM tool to check for security breaches in smart contracts. To learn more, go to : https://github.com/git-disl/GPTLens. This demo app provides a scenario-based walkthrough of how GPTLens utilizes LLMs to examine smart contract code and detect vulnerabilities.
 
 ## GPTLens introduction
 GPTLens leverages Large Language Models (LLMs) like GPT-4 to enhance the security analysis of smart contracts. It addresses the critical need for effective smart contract vulnerability detection, which has become increasingly important with the prevalence of blockchain technology. GPTLens introduces a two-stage framework: generation and discrimination. In the generation stage, LLMs act as auditors to identify a broad spectrum of potential vulnerabilities. The discrimination stage then evaluates these findings to minimize false positives, significantly enhancing the accuracy and reliability of vulnerability detection(shown in the figure below).
@@ -24,7 +24,7 @@ pip install -r requirements.txt
 python src/gpt_lens_demo.py
 
 
-## Sample Page of Demo
+## Sample Pages of GPTLens Demo
 This demo shows the GPT-lens workflow
 
 Demo app Coverpage:
