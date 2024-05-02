@@ -9,7 +9,8 @@ GPTLens leverages Large Language Models (LLMs) like GPT-4 to enhance the securit
 <img width="900" alt="Screenshot 2024-05-01 at 8 42 39 AM" src="https://github.com/git-disl/GPTLens-Demo/assets/72898301/14bd5cd0-1c43-449f-a5f8-ec85dab4c46c">
 
 
-## Key Features of GPTLens
+
+Some key features of GPTLens include:
 - **Dual-stage Analysis:** Utilizes generation and discrimination stages to identify and verify smart contract vulnerabilities.
 - **LLM-driven Approach:** Completely driven by LLMs, requiring no specialist knowledge in smart contracts for initial assessments.
 - **High Accuracy and Efficiency:** Designed to reduce false positives and enhance the detection process without compromising on performance.
