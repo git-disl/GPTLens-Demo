@@ -14,8 +14,8 @@ class GPTLensGUI:
         self.root.title("GPTLens Data Pipelining GUI")
         self.root.geometry("1300x900")
         self.color='steel blue'
-        self.data_dir = 'data_full/CVE_clean'
-        self.preprocessed_dir = 'data_full/CVE_clean'
+        self.data_dir = 'data_sample/CVE_clean'
+        # self.preprocessed_dir = 'data_sample/CVE_clean'
         self.auditor_dirs = [
             'results/auditor_gpt-4_0.7_top3_1',
         ]
@@ -298,7 +298,7 @@ class GPTLensGUI:
         self.dropdown['values'] = []  # Reset the dropdown values
         try:
             # List all files in the data directory that match a file condition (if needed)
-            files = sorted([f for f in os.listdir(self.data_dir) if os.path.isfile(os.path.join(self.data_dir, f)) and self.filter_on_data in f])
+            files = sorted([f for f in os.listdir(self.data_dir) if os.path.isfile(os.path.join(self.data_dir, f))])
             # Set the first file in the list as the current value (if list is not empty)
             if files:
                 self.dropdown['values'] = files  # Update the dropdown list with file names
@@ -551,7 +551,7 @@ class GPTLensGUI:
                     widget.delete(i)
 
         # Preprocessing result
-        preprocess_path = os.path.join(self.preprocessed_dir, file_name)
+        preprocess_path = os.path.join(self.data_dir, file_name)
         if os.path.exists(preprocess_path):
             with open(preprocess_path, 'r') as file:
                 code_file=file.read()
