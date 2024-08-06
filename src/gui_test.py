@@ -17,21 +17,19 @@ class GPTLensGUI:
         self.data_dir = 'data_full/CVE_clean'
         self.preprocessed_dir = 'data_full/CVE_clean'
         self.auditor_dirs = [
-            'results/auditor_gpt-4-turbo-preview_0.7_top3_1',
-            'results1/logs/auditor_gpt-4_0.7_top3_1',
-            'results1/logs/auditor_gpt-4-turbo-preview_0.7_top3_1'
+            'results/auditor_gpt-4_0.7_top3_1',
         ]
         self.critic_dirs = [
-            'results/auditor_gpt-4-turbo-preview_0.7_top3_1/critic_gpt-4-turbo-preview_0.0_1_few',
-            'results1/logs/auditor_gpt-4-turbo-preview_0.7_top3_1/critic_gpt-4-turbo-preview_0.0_1_few'
+            'results/auditor_gpt-4_0.7_top3_1/critic_gpt-4_0_1_zero_0928',
+            # 'results/auditor_gpt-4_0.7_top3_1/critic_gpt-4_0_1_few_1026'
         ]
         self.ranker_dirs = [
-            'results/auditor_gpt-4-turbo-preview_0.7_top3_1/critic_gpt-4-turbo-preview_0.0_1_few/ranker_default',
-            'results1/logs/auditor_gpt-4-turbo-preview_0.7_top3_1/critic_gpt-4-turbo-preview_0.0_1_few/ranker_default'
+            # 'results/auditor_gpt-4_0.7_top3_1/critic_gpt-4_0_1_few_1026/ranker_default',
+            'results/auditor_gpt-4_0.7_top3_1/critic_gpt-4_0_1_zero_0928/ranker_default'
         ]
-        self.label_path = 'data_sample/CVE_label/CVE2label.json'
-        self.description_path = 'data_sample/CVE_label/CVE2description.json'
-        self.filter_on_data = '2018-'
+        self.label_path = 'data_full/CVE_label/CVE2label.json'
+        self.description_path = 'data_full/CVE_label/CVE2description.json'
+        self.filter_on_data = ''
 
         # Create an instance of Style widget
         style=ttk.Style()
@@ -356,16 +354,11 @@ class GPTLensGUI:
                     file_name = item_data[0]  # Assuming 'file_name' is at index 0
                     function_name=item_data[1]
                     vuln=item_data[2]
-                    auditor_idx=item_data[3]
-
                     # Construct the path to the JSON file based on the selected row's data
                     for auditor_dir in self.auditor_dirs:
-
+                            
                         # Deal with filename that needs to add CVE
-                        if auditor_idx=='1':
-                            json_path = os.path.join(auditor_dir, 'CVE-'+file_name.replace('.sol', '.json'))
-                        else:
-                            json_path = os.path.join(auditor_dir, file_name.replace('.sol', '.json'))
+                        json_path = os.path.join(auditor_dir, 'CVE-'+file_name.replace('.sol', '.json'))
 
                         if os.path.exists(json_path):
                             # Load JSON data
@@ -453,13 +446,11 @@ class GPTLensGUI:
                     file_name = item_data[5]  # Assuming 'file_name' is at index 5
                     # Construct the path to the JSON file based on the selected row's data
                     for critic_dir in self.critic_dirs:
-                        json_path = os.path.join(critic_dir, file_name.replace('.sol', '.json'))
-                        print(json_path)
+                        json_path = os.path.join(critic_dir, 'CVE-'+file_name.replace('.sol', '.json'))
                         if os.path.exists(json_path):
                             # Load JSON data
                             with open(json_path, 'r') as file:
                                 data = json.load(file)
-                                # print(data)
                                 # Find the corresponding entry in the JSON data
                                 for entry in data:
                                     if entry.get('function_name') == function_name and entry.get('vulnerability') == vulnerability:
@@ -577,31 +568,30 @@ class GPTLensGUI:
                 if description_key in data:
                     self.data_description.insert(tk.END, data[description_key])
         
-        for index, auditor_dir in enumerate(self.auditor_dirs):
+        for auditor_dir in self.auditor_dirs:
             # Deal with filename that needs to add CVE
-            auditor_file = 'CVE-' + file_name.replace('.sol', '.json') if index == 1 else file_name.replace('.sol', '.json')
+            auditor_file = 'CVE-' + file_name.replace('.sol', '.json') 
             auditor_path = os.path.join(auditor_dir, auditor_file)
-            self.load_auditor(auditor_path, self.auditor_view, auditor_id=index)
+            self.load_auditor(auditor_path, self.auditor_view)
 
-        for index, critic_dir in enumerate(self.critic_dirs):
-            critic_path = os.path.join(critic_dir, file_name.replace('.sol', '.json'))
-            self.load_critic(critic_path, self.critic_view, critic_id=index)
+        for critic_dir in self.critic_dirs:
+            critic_path = os.path.join(critic_dir, 'CVE-' + file_name.replace('.sol', '.json'))
+            self.load_critic(critic_path, self.critic_view)
 
         for ranker_dir in self.ranker_dirs:
-            ranker_path = os.path.join(ranker_dir, file_name.replace('.sol', '.json'))
+            ranker_path = os.path.join(ranker_dir,'CVE-' + file_name.replace('.sol', '.json'))
             self.load_ranker(ranker_path, self.ranker_view)
         
 
-    def load_auditor(self,path,tree_view,auditor_id):
+    def load_auditor(self,path,tree_view):
         if os.path.exists(path):
             with open(path, 'r') as file:
                 data = json.load(file)
                 critic_input = critic_zero_shot_prompt + "\n"+  json.dumps(data, indent=4) + "\n"+critic_format_constrain
-                print(data)
                 self.critic_prompt_text.delete('1.0', tk.END)
                 self.critic_prompt_text.insert(tk.END, critic_input)
 
-                tree_view['columns'] = ['file_name','function_name','vulnerability','auditor_idx']
+                tree_view['columns'] = ['file_name','function_name','vulnerability']
                 for col in tree_view['columns']:
                     tree_view.heading(col, text=col.capitalize())
                     if col == 'Function_name':
@@ -611,9 +601,8 @@ class GPTLensGUI:
                 # Insert data into treeview
                 for item in data:
                     values = [item.get(key,'') for key in tree_view['columns']]
-                    values[-1]=str(auditor_id)
                     tree_view.insert('', 'end', values=values)
-    def load_critic(self,path,tree_view,critic_id):
+    def load_critic(self,path,tree_view):
         if os.path.exists(path):
             with open(path, 'r') as file:
                 data = json.load(file)
@@ -627,7 +616,6 @@ class GPTLensGUI:
                 # Insert data into treeview
                 for item in data:
                     values = [item.get(key, '') for key in tree_view['columns']]
-                    # values[-1]=str(critic_id)
                     tree_view.insert('', 'end', values=values)
 
     def load_ranker(self,path,tree_view):
